@@ -1,16 +1,9 @@
-import { from, logger } from "env-var";
+import { cleanEnv, str } from "envalid";
 
-// Log missing env variables
-const env = from(process.env, {}, logger);
-
-// Export env variables
-export const JWT_KEY: string = env.get("JWT_KEY").required().asString();
-export const NATS_CLIENT_ID: string = env
-  .get("NATS_CLIENT_ID")
-  .required()
-  .asString();
-export const NATS_URL: string = env.get("NATS_URL").required().asString();
-export const NATS_CLUSTER_ID: string = env
-  .get("NATS_CLUSTER_ID")
-  .required()
-  .asString();
+export const ENV = cleanEnv(process.env, {
+  JWT_KEY: str(),
+  NATS_CLIENT_ID: str(),
+  NATS_URL: str(),
+  NATS_CLUSTER_ID: str(),
+  NODE_ENV: str({ default: "development" }),
+});

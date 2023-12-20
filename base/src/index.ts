@@ -1,26 +1,28 @@
 import { app } from "./app";
+import { ENV } from "./env";
 import { natsWrapper } from "./nats-wrapper";
-import { NATS_CLUSTER_ID, NATS_CLIENT_ID, NATS_URL } from "./env";
+import { logger } from "./utils/logger";
 
 const start = async () => {
   try {
     // Initiate NATS client
-    await natsWrapper.connect(NATS_CLUSTER_ID, NATS_CLIENT_ID, NATS_URL);
+    await natsWrapper.connect(
+      ENV.NATS_CLUSTER_ID,
+      ENV.NATS_CLIENT_ID,
+      ENV.NATS_URL
+    );
     natsWrapper.client.on("close", () => {
-      console.log("NATS connection closed!");
+      logger.info("NATS connection closed!");
       process.exit();
     });
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
-
-    // TODO: Initiate listeners
-    // TODO: Initiate DB connection
   } catch (err) {
-    console.error(err);
+    logger.error(err);
   }
 
   app.listen(3000, () => {
-    console.log("Listening on port 3000!!!!!!!!");
+    logger.info("Listening on port 3000...");
   });
 };
 

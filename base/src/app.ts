@@ -2,8 +2,9 @@ import express from "express";
 import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
-import { errorHandler, NotFoundError, currentUser } from "@matzapata/common";
+import { errorHandler, NotImplementedError } from "@matzapata/common";
 import { indexOrderRouter } from "./routes/index";
+import { logger } from "./utils/logger";
 
 const app = express();
 app.set("trust proxy", true);
@@ -14,14 +15,13 @@ app.use(
     secure: false,
   })
 );
-app.use(currentUser);
 
 app.use(indexOrderRouter);
 
 app.all("*", async () => {
-  throw new NotFoundError(); // TODO: Create not implemented error
+  throw new NotImplementedError();
 });
 
-app.use(errorHandler);
+app.use(errorHandler(logger.error));
 
 export { app };
