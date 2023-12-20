@@ -1,13 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import { CustomError } from "./custom-error";
 
-export class NotAuthorizedError extends CustomError {
+export class UnauthorizedError extends CustomError {
   statusCode = StatusCodes.UNAUTHORIZED;
 
   constructor(message?: string) {
-    super(message ?? "Not Authorized");
+    super(message ?? "Unauthorized");
 
-    Object.setPrototypeOf(this, NotAuthorizedError.prototype);
+    Object.setPrototypeOf(this, UnauthorizedError.prototype);
   }
 
   serializeErrors() {

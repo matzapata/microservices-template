@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "../errors/unauthorized-error";
+import { ENV } from "../env";
 
 interface UserPayload {
   id: string;
@@ -12,23 +14,23 @@ declare module "Express" {
   }
 }
 
-export const currentUser = (
+export const requiresAuth = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.session?.jwt) {
-    return next();
+  if (!req.headers.authorization) {
+    throw new UnauthorizedError();
   }
 
   try {
-    const payload = jwt.verify(
-      req.session.jwt,
-      process.env.JWT_KEY!
-    ) as UserPayload;
+    const authToken = req.headers.authorization.split(" ")[1];
+    const payload = jwt.verify(authToken, ENV.JWT_KEY!) as UserPayload;
+
     req.currentUser = payload;
   } catch (err) {
     req.currentUser = null;
+    throw new UnauthorizedError();
   }
 
   return next();
