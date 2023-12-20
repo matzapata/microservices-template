@@ -508,10 +508,13 @@ jobs:
 
 ## Logs
 
+https://www.loggly.com/blog/effective-logging-in-node-js-microservices/
 https://www.appsignal.com/plans
+https://blog.appsignal.com/2023/05/18/transport-your-logs-with-winston-to-appsignal.html
 
 ## Emails
 
+Nodemailer
 https://www.mailersend.com/pricing
 
 ## UI
@@ -521,9 +524,9 @@ Make use of the classname library for combining classes.
 Check button.tsx as an example
 
 
-# TODO:
+# TODO
 
 - TODO: Auth with passport for google oauth
-- TODO: Logs with winston. Create transports for files, appsignal and others
 - TODO: Monitoring with telegram alerts
 - TODO: Code generator
+
