@@ -10,13 +10,6 @@ spec:
     - host: microservices-base.com
       http:
         paths:
-          - path: /api/users/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: auth-srv
-                port:
-                  number: 3000
           - path: /api/base/?(.*)
             pathType: ImplementationSpecific
             backend:

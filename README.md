@@ -1,6 +1,10 @@
 
 # Microservices template
 
+# Generator
+
+Make use of the generator to leverage your development speed.
+
 # Instructions
 
 ## Running and debugging
@@ -528,5 +532,4 @@ Check button.tsx as an example
 
 - TODO: Auth with passport for google oauth
 - TODO: Monitoring with telegram alerts
-- TODO: Code generator
 
