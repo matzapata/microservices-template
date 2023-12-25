@@ -276,7 +276,6 @@ Mock auth middleware
 
 ## Events, listeners, publishers and types
 
-
 ### Create new event:
 
 1. In common create a subject in `src/events/subjects.ts`
@@ -531,5 +530,4 @@ Check button.tsx as an example
 # TODO
 
 - TODO: Auth with passport for google oauth
-- TODO: Monitoring with telegram alerts
 

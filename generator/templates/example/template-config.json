@@ -1,7 +1,7 @@
 {
     "files": [
         {
-            "source": "test.handlebars",
+            "source": "files/test.handlebars",
             "target": "{{projectName}}-service.html"
         }
     ]
