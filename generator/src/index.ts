@@ -2,30 +2,40 @@
 import * as fs from "fs";
 import * as path from "path";
 import { program } from "commander";
-import {
-  copyTemplateFiles,
-  getTemplateNames,
-  printTemplateMarkdownToConsole,
-  promptUser,
-} from "./utils";
+import { renderTemplateFiles, printTemplateMarkdownToConsole } from "./utils";
+import inquirer from "inquirer";
 
 // Command to create a new project
 program
   .command("create")
   .description("Create a new microservices project")
   .action(async () => {
-    const { projectName, template } = await promptUser();
+    const { projectName, commonPackageName } = await inquirer.prompt([
+      { type: "input", name: "projectName", message: "Enter project name:" },
+      {
+        type: "input",
+        name: "commonPackageName",
+        message: "Enter common package name:",
+      },
+    ]);
     const targetDir = path.join(process.cwd(), projectName);
+    const template = "project";
 
     // Create the target directory
     fs.mkdirSync(targetDir);
 
-    // Copy template files to the target directory
-    // TODO: Render multiple templates
-    copyTemplateFiles(template, targetDir, projectName);
+    try {
+      // Copy template files to the target directory
+      renderTemplateFiles(template, targetDir, {
+        projectName,
+        commonPackageName,
+      });
 
-    // Read and print the readme contents
-    printTemplateMarkdownToConsole(template);
+      // Read and print the readme contents
+      printTemplateMarkdownToConsole(template);
+    } catch (e) {
+      console.log(e);
+    }
   });
 
 program
@@ -35,18 +45,6 @@ program
 program
   .command("services")
   .description("Add template services to an existing project");
-
-// Command to list available templates
-program
-  .command("list-templates")
-  .description("List available templates")
-  .action(() => {
-    const templateNames = getTemplateNames();
-    console.log(
-      "Available templates and instructions:\n",
-      templateNames.join("\n")
-    );
-  });
 
 // Parse command line arguments
 program.parse(process.argv);

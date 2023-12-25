@@ -1,89 +1,66 @@
 #!/usr/bin/env node
 import * as fs from "fs";
 import * as path from "path";
-import inquirer from "inquirer";
 import * as handlebars from "handlebars";
 import markshell from "markshell";
 
-interface FileConfig {
-  source: string;
-  target: string;
-}
+function templatesDir(
+  template: string // May contain slashes to indicate subdirectories
+) {
+  const templatePath: string[] = template.includes("/")
+    ? template.split("/")
+    : [template];
 
-interface TemplateConfig {
-  files: FileConfig[];
-}
-
-const templatesDir = path.join(__dirname, "..", "templates");
-
-// Function to prompt user for project details
-export function promptUser() {
-  return inquirer.prompt([
-    { type: "input", name: "projectName", message: "Enter project name:" },
-    {
-      type: "list",
-      name: "template",
-      message: "Choose a template:",
-      choices: getTemplateNames(),
-    },
-  ]);
-}
-
-// Function to get template names from the templates directory
-export function getTemplateNames() {
-  return fs
-    .readdirSync(templatesDir)
-    .filter((file) => fs.statSync(path.join(templatesDir, file)).isDirectory());
-}
-
-// Function to read template configuration
-function readTemplateConfig(
-  templateName: string,
-  projectName: string
-): TemplateConfig {
-  const configPath = path.join(
-    templatesDir,
-    templateName,
-    "template-config.json"
-  );
-  const templateConfig: TemplateConfig = JSON.parse(
-    fs.readFileSync(configPath, "utf-8")
-  );
-
-  // Apply Handlebars templating to the target paths
-  templateConfig.files.forEach((fileConfig) => {
-    fileConfig.target = handlebars.compile(fileConfig.target)({ projectName });
-  });
-
-  return templateConfig;
+  return path.join(__dirname, "..", "templates", ...templatePath);
 }
 
 // Function to copy template files to the target directory
-export function copyTemplateFiles(
-  templateName: string,
+export function renderTemplateFiles(
+  template: string, // May contain slashes to indicate subdirectories
   targetDir: string,
-  projectName: string
+  renderData: unknown
 ) {
-  const templateConfig = readTemplateConfig(templateName, projectName);
+  const templateFilesDir = path.join(templatesDir(template), "files");
 
-  templateConfig.files.forEach((fileConfig) => {
-    const { source, target } = fileConfig;
+  // Recursive function to traverse directories
+  const renderFileRecursively = (dir: string, relativePath = "") => {
+    const files = fs.readdirSync(dir);
 
-    const sourceFilePath = path.join(templatesDir, templateName, source);
-    const fileContent = fs.readFileSync(sourceFilePath, "utf-8");
-    const renderedContent = handlebars.compile(fileContent)({ projectName });
-    const targetFilePath = path.join(targetDir, target);
+    files.forEach((file) => {
+      const filePath = path.join(dir, file);
+      const relativeFilePath = path.join(relativePath, file);
 
-    // Ensure target directory exists
-    fs.mkdirSync(path.dirname(targetFilePath), { recursive: true });
+      if (fs.statSync(filePath).isDirectory()) {
+        // If it's a directory, recursively render the templates
+        renderFileRecursively(filePath, relativeFilePath);
+      } else {
+        // If it's a file, process it
+        const fileContent = fs.readFileSync(filePath, "utf-8");
 
-    fs.writeFileSync(targetFilePath, renderedContent);
-  });
+        // Extract file name, render it, and remove .handlebars extension
+        const targetFilePath = path.join(
+          targetDir,
+          handlebars
+            .compile(relativeFilePath)(renderData)
+            .replace(/\.handlebars$/, "")
+        );
+
+        // Ensure target directory exists
+        fs.mkdirSync(path.dirname(targetFilePath), { recursive: true });
+
+        // Render file content using Handlebars and write to target
+        const renderedContent = handlebars.compile(fileContent)(renderData);
+        fs.writeFileSync(targetFilePath, renderedContent);
+      }
+    });
+  };
+
+  renderFileRecursively(templateFilesDir);
 }
 
 // Function to print markdown to the console using markshell
 export function printTemplateMarkdownToConsole(template: string) {
-  const readmePath = path.join(templatesDir, template, "template-readme.md");
+  const readmePath = path.join(templatesDir(template), "template-readme.md");
   if (fs.existsSync(readmePath)) {
     markshell.toConsole(readmePath);
   }
