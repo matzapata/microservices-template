@@ -9,6 +9,14 @@ build:
   local:
     push: false
   artifacts:
+    - image: matzapata/auth-service
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: matzapata/base-client
       context: client
       docker:
@@ -25,4 +33,3 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    
