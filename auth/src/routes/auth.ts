@@ -30,7 +30,12 @@ router.post(
   AuthController.login
 );
 router.get("/verify/:token", AuthController.verifyEmail);
-router.post("/verify/resend", AuthController.resendToken);
+router.post(
+  "/verify/resend",
+  [body("email").isEmail().withMessage("Enter a valid email address")],
+  validateRequest,
+  AuthController.resendToken
+);
 
 //Password RESET
 // router.post(

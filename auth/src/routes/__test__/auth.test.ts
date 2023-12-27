@@ -217,6 +217,61 @@ describe("GET /api/users/auth/verify/:token", () => {
   });
 });
 
+describe("POST /api/users/auth/resend", () => {
+  it("Should validate request parameters", async () => {
+    const res = await request(app)
+      .post(BASE_URL + "/verify/resend")
+      .send({});
+
+    expect(res.body.errors).toStrictEqual([
+      { message: "Enter a valid email address", field: "email" },
+    ]);
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+  });
+
+  it("Fails if account with such an email doesn't exist", async () => {
+    const res = await request(app)
+      .post(BASE_URL + "/verify/resend")
+      .send({
+        email: "new-email@gmail.com",
+      });
+
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.errors).toStrictEqual([{ message: "Email not found" }]);
+  });
+
+  it("Fails if email is already verified", async () => {
+    await createUser("email@gmail.com", "password", "test", "test", true);
+
+    const res = await request(app)
+      .post(BASE_URL + "/verify/resend")
+      .send({
+        email: "email@gmail.com",
+      });
+
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.errors).toStrictEqual([
+      { message: "Email already verified" },
+    ]);
+  });
+
+  it("Returns 200 and sends a verification email if email is valid and email is was not verified yet", async () => {
+    await createUser("email@gmail.com", "password", "test", "test", false);
+
+    const res = await request(app)
+      .post(BASE_URL + "/verify/resend")
+      .send({
+        email: "email@gmail.com",
+      });
+
+    expect(res.status).toEqual(StatusCodes.OK);
+    expect(sendEmail).toHaveBeenCalled();
+  });
+});
+
 async function createUser(
   email: string,
   password: string,
