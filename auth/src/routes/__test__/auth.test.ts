@@ -272,12 +272,128 @@ describe("POST /api/users/auth/resend", () => {
   });
 });
 
+describe("POST /api/users/auth/reset", () => {
+  it("Should validate request parameters", async () => {
+    const res = await request(app)
+      .post(BASE_URL + "/reset")
+      .send({});
+
+    expect(res.body.errors).toStrictEqual([
+      { message: "Enter a valid email address", field: "email" },
+    ]);
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+  });
+
+  it("Fails if account with such an email doesn't exist", async () => {
+    const res = await request(app)
+      .post(BASE_URL + "/reset")
+      .send({
+        email: "fake-email@gmail.com",
+      });
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.errors).toStrictEqual([{ message: "Email not found" }]);
+  });
+
+  it("Returns 200 and sends a password reset email if email is valid", async () => {
+    await createUser("test@gmail.com", "password", "test", "test", true);
+
+    const res = await request(app)
+      .post(BASE_URL + "/reset")
+      .send({ email: "test@gmail.com" });
+
+    console.log(res.body);
+
+    expect(res.status).toEqual(StatusCodes.OK);
+    expect(sendEmail).toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/users/auth/reset/:token", () => {
+  it("Should validate request parameters", async () => {
+    const res = await request(app)
+      .post(BASE_URL + "/reset/this-is-a-fake-token")
+      .send({});
+
+    expect(res.body.errors).toStrictEqual([
+      { message: "Invalid value", field: "password" },
+      { message: "Must be at least 6 chars long", field: "password" },
+    ]);
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+  });
+
+  it("Fails if token doesn't exist", async () => {
+    const res = await request(app)
+      .post(BASE_URL + "/reset/this-is-a-fake-token")
+      .send({
+        password: "password",
+        confirmPassword: "password",
+      });
+
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.errors).toStrictEqual([{ message: "Invalid token" }]);
+  });
+
+  it("Fails if token is expired", async () => {
+    await createUser(
+      "test@gmail.com",
+      "password",
+      "name",
+      "surname",
+      true,
+      "reset-token",
+      new Date(Date.now() - 3600000)
+    );
+
+    const res = await request(app)
+      .post(BASE_URL + "/reset/reset-token")
+      .send({
+        password: "password",
+        confirmPassword: "password",
+      });
+
+    expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
+    expect(res.body.errors).toStrictEqual([{ message: "Invalid token" }]);
+  });
+
+  it("Returns 200, resets the password and sends and email if token is valid", async () => {
+    await createUser(
+      "test@gmail.com",
+      "password",
+      "name",
+      "surname",
+      true,
+      "reset-token"
+    );
+
+    const res = await request(app)
+      .post(BASE_URL + "/reset/reset-token")
+      .send({
+        password: "new-password",
+        confirmPassword: "new-password",
+      });
+
+    expect(res.status).toEqual(StatusCodes.OK);
+    expect(sendEmail).toHaveBeenCalled();
+
+    const user = await User.findOne({ email: "test@gmail.com" });
+    expect(await user?.comparePassword("password")).toEqual(false);
+    expect(await user?.comparePassword("new-password")).toEqual(true);
+  });
+});
+
 async function createUser(
   email: string,
   password: string,
   firstName: string,
   lastName: string,
-  isVerified: boolean = false
+  isVerified: boolean = false,
+  resetPasswordToken: string = "reset-token",
+  resetPasswordExpires: Date = new Date(Date.now() + 3600000)
 ): Promise<{ user: UserDoc; token: TokenDoc }> {
   const user = User.build({
     email,
@@ -285,6 +401,8 @@ async function createUser(
     firstName,
     lastName,
     isVerified,
+    resetPasswordToken,
+    resetPasswordExpires,
   });
   await user.save();
   const token = user.generateVerificationToken();

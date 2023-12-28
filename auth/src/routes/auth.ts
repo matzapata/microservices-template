@@ -1,7 +1,8 @@
 import express from "express";
 import { validateRequest } from "@matzapata/common";
-import * as AuthController from "../controllers/auth";
 import { body } from "express-validator";
+import * as AuthController from "../controllers/auth";
+import * as PasswordController from "../controllers/password";
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.post(
   validateRequest,
   AuthController.register
 );
+
 router.post(
   "/login",
   [
@@ -29,7 +31,7 @@ router.post(
   validateRequest,
   AuthController.login
 );
-router.get("/verify/:token", AuthController.verifyEmail);
+
 router.post(
   "/verify/resend",
   [body("email").isEmail().withMessage("Enter a valid email address")],
@@ -37,30 +39,29 @@ router.post(
   AuthController.resendToken
 );
 
-//Password RESET
-// router.post(
-//   "/recover",
-//   [body("email").isEmail().withMessage("Enter a valid email address")],
-//   validateRequest,
-//   Password.recover
-// );
+router.get("/verify/:token", AuthController.verifyEmail);
 
-// router.get("/reset/:token", [], validateRequest, Password.reset);
+router.post(
+  "/reset",
+  [body("email").isEmail().withMessage("Enter a valid email address")],
+  validateRequest,
+  PasswordController.requestPasswordReset
+);
 
-// router.post(
-//   "/reset/:token",
-//   [
-//     body("password")
-//       .not()
-//       .isEmpty()
-//       .isLength({ min: 6 })
-//       .withMessage("Must be at least 6 chars long"),
-//     body("confirmPassword", "Passwords do not match").custom(
-//       (value, { req }) => value === req.body.password
-//     ),
-//   ],
-//   validateRequest,
-//   Password.resetPassword
-// );
+router.post(
+  "/reset/:token",
+  [
+    body("password")
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+      .withMessage("Must be at least 6 chars long"),
+    body("confirmPassword", "Passwords do not match").custom(
+      (value, { req }) => value === req.body.password
+    ),
+  ],
+  validateRequest,
+  PasswordController.resetPassword
+);
 
 export { router as authRouter };
