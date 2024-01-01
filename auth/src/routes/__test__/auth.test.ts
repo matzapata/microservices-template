@@ -6,11 +6,11 @@ import { User, UserDoc } from "../../models/user";
 import { TokenDoc } from "../../models/token";
 import jwt from "jsonwebtoken";
 
-const BASE_URL = "/api/users/auth";
+const BASE_URL = "/api/auth";
 
 jest.mock("../../utils/send-email");
 
-describe("POST /api/users/auth/register", () => {
+describe("POST /api/auth/register", () => {
   it("Should validate request parameters", async () => {
     const res = await request(app)
       .post(BASE_URL + "/register")
@@ -89,7 +89,7 @@ describe("POST /api/users/auth/register", () => {
   });
 });
 
-describe("POST /api/users/auth/login", () => {
+describe("POST /api/auth/login", () => {
   it("Should validate request parameters", async () => {
     const res = await request(app)
       .post(BASE_URL + "/login")
@@ -173,7 +173,7 @@ describe("POST /api/users/auth/login", () => {
   });
 });
 
-describe("GET /api/users/auth/verify/:token", () => {
+describe("GET /api/auth/verify/:token", () => {
   it("Fails if token doesn't exist", async () => {
     const res = await request(app).get(
       BASE_URL + "/verify/this-is-a-fake-token"
@@ -217,7 +217,7 @@ describe("GET /api/users/auth/verify/:token", () => {
   });
 });
 
-describe("POST /api/users/auth/resend", () => {
+describe("POST /api/auth/resend", () => {
   it("Should validate request parameters", async () => {
     const res = await request(app)
       .post(BASE_URL + "/verify/resend")
@@ -272,7 +272,7 @@ describe("POST /api/users/auth/resend", () => {
   });
 });
 
-describe("POST /api/users/auth/reset", () => {
+describe("POST /api/auth/reset", () => {
   it("Should validate request parameters", async () => {
     const res = await request(app)
       .post(BASE_URL + "/reset")
@@ -310,7 +310,7 @@ describe("POST /api/users/auth/reset", () => {
   });
 });
 
-describe("POST /api/users/auth/reset/:token", () => {
+describe("POST /api/auth/reset/:token", () => {
   it("Should validate request parameters", async () => {
     const res = await request(app)
       .post(BASE_URL + "/reset/this-is-a-fake-token")

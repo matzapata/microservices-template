@@ -6,6 +6,7 @@ import { errorHandler, NotImplementedError } from "@matzapata/common";
 import { authRouter } from "./routes/auth";
 import { logger } from "./utils/logger";
 import morgan from "morgan";
+import { usersRouter } from "./routes/user";
 
 const app = express();
 
@@ -23,7 +24,8 @@ app.use(
   })
 );
 
-app.use("/api/users/auth", authRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 
 app.all("*", async () => {
   throw new NotImplementedError();
