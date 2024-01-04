@@ -20,7 +20,6 @@ const request = supertest(app);
 describe("validate-request middleware", () => {
   it("should return BAD_REQUEST if the parameters validation fails", async () => {
     const res = await request.get("/validate-request").send();
-    console.log;
     expect(res.statusCode).toEqual(StatusCodes.BAD_REQUEST);
   });
 

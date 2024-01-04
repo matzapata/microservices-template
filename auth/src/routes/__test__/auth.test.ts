@@ -303,8 +303,6 @@ describe("POST /api/auth/reset", () => {
       .post(BASE_URL + "/reset")
       .send({ email: "test@gmail.com" });
 
-    console.log(res.body);
-
     expect(res.status).toEqual(StatusCodes.OK);
     expect(sendEmail).toHaveBeenCalled();
   });

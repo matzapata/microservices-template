@@ -108,7 +108,6 @@ describe("PUT /api/users/:uid", () => {
       .put(BASE_URL + `/${user.id}`)
       .set("Authorization", `Bearer ${authToken}`);
 
-    console.log("res", res.body);
     expect(res.status).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body.status).toEqual(StatusCodes.BAD_REQUEST);
     expect(res.body.errors).toStrictEqual([
