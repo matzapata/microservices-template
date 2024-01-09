@@ -13,6 +13,9 @@
     "test": "jest --no-cache"
   },
   "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>src/tests/setup.ts"
+    ],
     "transform": {
       "^.+\\.ts?$": "ts-jest"
     },

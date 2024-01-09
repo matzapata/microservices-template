@@ -20,17 +20,19 @@ export const requiresAuth = (
   next: NextFunction
 ) => {
   if (!req.headers.authorization) {
-    throw new UnauthorizedError();
+    return next(new UnauthorizedError());
   }
 
   try {
     const authToken = req.headers.authorization.split(" ")[1];
-    const payload = jwt.verify(authToken, ENV.JWT_KEY!) as UserPayload;
+    const payload = jwt.verify(authToken, ENV.JWT_KEY!) as UserPayload & {
+      [key: string]: unknown;
+    };
 
     req.currentUser = payload;
   } catch (err) {
     req.currentUser = null;
-    throw new UnauthorizedError();
+    return next(new UnauthorizedError());
   }
 
   return next();

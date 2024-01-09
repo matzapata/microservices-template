@@ -17,7 +17,7 @@
       "^.+\\.ts?$": "ts-jest"
     },
     "setupFilesAfterEnv": [
-      "<rootDir>src/tests-setup.ts"
+      "<rootDir>src/tests/setup.ts"
     ],
     "testTimeout": 60000,
     "moduleFileExtensions": [

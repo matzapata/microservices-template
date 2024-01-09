@@ -1,46 +1,34 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt from "jsonwebtoken";
-import supertest from "supertest";
-import express, { Request, Response } from "express";
+import express from "express";
 import { requiresAuth } from "../requires-auth";
-import { StatusCodes } from "http-status-codes";
-import { CustomError } from "../../errors/custom-error";
-
-process.env.JWT_KEY = "test-jwt-key";
-
-// Create example app
-const app = express();
-app.use(express.json());
-app.get("/requires-auth", requiresAuth, (req: Request, res: Response) => {
-  try {
-    res.status(StatusCodes.OK).send(req.currentUser);
-  } catch (err) {
-    if (err instanceof CustomError) {
-      res.status(err.statusCode).send(err.message);
-    } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
-    }
-  }
-});
-const request = supertest(app);
+import { UnauthorizedError } from "../../errors/unauthorized-error";
 
 describe("requires-auth middleware", () => {
   it("should return 401 if no user is logged in", async () => {
-    const res = await request.get("/requires-auth").send();
+    const req = { headers: {} } as express.Request;
+    const res = {};
+    const next = jest.fn();
 
-    expect(res.statusCode).toEqual(StatusCodes.UNAUTHORIZED);
+    requiresAuth(req, res as any, next);
+
+    expect(next).toHaveBeenCalledWith(new UnauthorizedError());
   });
 
   it("should set the jwt payload in req.currentUser", async () => {
     const jwtPayload = { id: "test-id", email: "email@gmail.com" };
     const token = jwt.sign(jwtPayload, process.env.JWT_KEY!);
 
-    const res = await request
-      .get("/requires-auth")
-      .set("Authorization", `Bearer ${token}`)
-      .send();
+    const req = {
+      headers: { authorization: `Bearer ${token}` },
+    } as express.Request;
+    const res = {};
+    const next = jest.fn();
 
-    expect(res.statusCode).toEqual(StatusCodes.OK);
-    expect(res.body.email).toEqual(jwtPayload.email);
-    expect(res.body.id).toEqual(jwtPayload.id);
+    requiresAuth(req, res as any, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(req.currentUser?.email).toEqual(jwtPayload.email);
+    expect(req.currentUser?.id).toEqual(jwtPayload.id);
   });
 });
