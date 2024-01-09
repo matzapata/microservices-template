@@ -30,7 +30,10 @@
     ],
     "modulePathIgnorePatterns": [
       "lib"
-    ]
+    ],
+    "moduleNameMapper": {
+      "src/(.*)": "<rootDir>/src/$1"
+    }
   },
   "keywords": [],
   "author": "",

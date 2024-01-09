@@ -1,7 +1,7 @@
 import { NotFoundError, UnauthorizedError } from "@matzapata/common";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { User } from "../models/user";
+import { User } from "src/models/user";
 
 export const show = async (req: Request, res: Response): Promise<Response> => {
   if (req.currentUser?.id !== req.params.id) {

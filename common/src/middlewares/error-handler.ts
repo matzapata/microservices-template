@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CustomError } from "../errors/custom-error";
+import { CustomError } from "src/errors/custom-error";
 import { StatusCodes } from "http-status-codes";
 
 export const errorHandler = (logger?: (...params: unknown[]) => unknown) => {

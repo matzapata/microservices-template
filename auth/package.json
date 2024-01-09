@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node-dev --poll src/index.ts",
     "build": "tsc --project tsconfig.json",
-    "test": "jest --watchAll --no-cache",
+    "test": "jest --no-cache",
     "test:ci": "jest",
     "lint": "eslint --ext .ts src",
     "lint:fix": "eslint --ext .ts src --fix",
@@ -30,7 +30,10 @@
     ],
     "modulePathIgnorePatterns": [
       "lib"
-    ]
+    ],
+    "moduleNameMapper": {
+      "src/(.*)": "<rootDir>/src/$1"
+    }
   },
   "keywords": [],
   "author": "",

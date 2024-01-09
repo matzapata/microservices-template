@@ -1,14 +1,14 @@
 import request from "supertest";
-import { app } from "../../app";
+import { app } from "src/app";
 import { StatusCodes } from "http-status-codes";
-import { sendEmail } from "../../utils/send-email";
-import { User, UserDoc } from "../../models/user";
-import { TokenDoc } from "../../models/token";
+import { sendEmail } from "src/utils/send-email";
+import { User, UserDoc } from "src/models/user";
+import { TokenDoc } from "src/models/token";
 import jwt from "jsonwebtoken";
 
 const BASE_URL = "/api/auth";
 
-jest.mock("../../utils/send-email");
+jest.mock("src/utils/send-email");
 
 describe("POST /api/auth/register", () => {
   it("Should validate request parameters", async () => {

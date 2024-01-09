@@ -1,5 +1,5 @@
-import { Subjects } from "./subjects";
-import { OrderStatus } from "./types/order-status";
+import { Subjects } from "src/events/subjects";
+import { OrderStatus } from "src/events/types/order-status";
 
 // TODO: Define all events like this
 export interface ExampleEvent {

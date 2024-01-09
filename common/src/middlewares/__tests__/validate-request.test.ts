@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import express, { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { validateRequest } from "../validate-request";
+import { validateRequest } from "src/middlewares/validate-request";
 import { body } from "express-validator";
 
 // Create example app

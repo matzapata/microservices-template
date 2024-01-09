@@ -1,8 +1,8 @@
 import express from "express";
 import { validateRequest } from "@matzapata/common";
 import { body } from "express-validator";
-import * as AuthController from "../controllers/auth";
-import * as PasswordController from "../controllers/password";
+import * as AuthController from "src/controllers/auth";
+import * as PasswordController from "src/controllers/password";
 
 const router = express.Router();
 

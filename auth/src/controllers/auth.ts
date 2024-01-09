@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { User, UserDoc } from "../models/user";
-import { Token } from "../models/token";
-import { sendEmail } from "../utils/send-email";
-import { ENV } from "../env";
+import { User, UserDoc } from "src/models/user";
+import { Token } from "src/models/token";
+import { sendEmail } from "src/utils/send-email";
+import { ENV } from "src/env";
 import { BadRequestError } from "@matzapata/common";
 import { StatusCodes } from "http-status-codes";
 

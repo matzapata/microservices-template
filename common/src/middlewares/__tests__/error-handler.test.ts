@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express from "express";
-import { UnauthorizedError } from "../../errors/unauthorized-error";
-import { errorHandler } from "../error-handler";
+import { UnauthorizedError } from "src/errors/unauthorized-error";
+import { errorHandler } from "src/middlewares/error-handler";
 import { StatusCodes } from "http-status-codes";
 
 const logger = jest.fn();

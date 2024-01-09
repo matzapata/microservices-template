@@ -1,7 +1,7 @@
 import request from "supertest";
-import { app } from "../../app";
-import { User, UserDoc } from "../../models/user";
-import { TokenDoc } from "../../models/token";
+import { app } from "src/app";
+import { User, UserDoc } from "src/models/user";
+import { TokenDoc } from "src/models/token";
 import { StatusCodes } from "http-status-codes";
 
 const BASE_URL = "/api/users";

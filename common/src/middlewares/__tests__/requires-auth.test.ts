@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt from "jsonwebtoken";
 import express from "express";
-import { requiresAuth } from "../requires-auth";
-import { UnauthorizedError } from "../../errors/unauthorized-error";
+import { requiresAuth } from "src/middlewares/requires-auth";
+import { UnauthorizedError } from "src/errors/unauthorized-error";
 
 describe("requires-auth middleware", () => {
   it("should return 401 if no user is logged in", async () => {

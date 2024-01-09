@@ -1,4 +1,4 @@
-import { CustomError } from "./custom-error";
+import { CustomError } from "src/errors/custom-error";
 import { StatusCodes } from "http-status-codes";
 
 export class NotImplementedError extends CustomError {

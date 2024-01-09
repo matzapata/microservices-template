@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { app } from "./app";
-import { ENV } from "./env";
-import { natsWrapper } from "./nats-wrapper";
-import { logger } from "./utils/logger";
+import { app } from "src/app";
+import { ENV } from "src/env";
+import { natsWrapper } from "src/nats-wrapper";
+import { logger } from "src/utils/logger";
 
 const start = async () => {
   try {

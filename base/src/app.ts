@@ -3,8 +3,8 @@ import "express-async-errors";
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
 import { errorHandler, NotImplementedError } from "@matzapata/common";
-import { testRouter } from "./routes/test";
-import { logger } from "./utils/logger";
+import { testRouter } from "src/routes/test";
+import { logger } from "src/utils/logger";
 import morgan from "morgan";
 
 const app = express();

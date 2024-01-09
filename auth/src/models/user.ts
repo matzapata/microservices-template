@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { ENV } from "../env";
-import { Token, TokenDoc } from "./token";
-import { Password } from "../utils/password";
+import { ENV } from "src/env";
+import { Token, TokenDoc } from "src/models/token";
+import { Password } from "src/utils/password";
 
 // An interface that describes the properties
 // that are requried to create a new User

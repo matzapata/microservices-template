@@ -4,9 +4,9 @@ import { json } from "body-parser";
 import cookieSession from "cookie-session";
 import { errorHandler, NotImplementedError } from "@matzapata/common";
 import { authRouter } from "./routes/auth";
-import { logger } from "./utils/logger";
+import { logger } from "src/utils/logger";
 import morgan from "morgan";
-import { usersRouter } from "./routes/user";
+import { usersRouter } from "src/routes/user";
 
 const app = express();
 

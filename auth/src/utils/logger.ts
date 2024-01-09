@@ -1,5 +1,5 @@
 import winston from "winston";
-import { ENV } from "../env";
+import { ENV } from "src/env";
 import DailyRotateFile from "winston-daily-rotate-file";
 
 export const logger = winston.createLogger({

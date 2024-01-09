@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { CustomError } from "./custom-error";
+import { CustomError } from "src/errors/custom-error";
 
 export class UnauthorizedError extends CustomError {
   statusCode = StatusCodes.UNAUTHORIZED;

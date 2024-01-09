@@ -1,6 +1,6 @@
 import express from "express";
 import { requiresAuth, validateRequest } from "@matzapata/common";
-import * as TestController from "../controllers/test";
+import * as TestController from "src/controllers/test";
 import { query } from "express-validator";
 
 const router = express.Router();
