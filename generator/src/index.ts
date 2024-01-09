@@ -5,46 +5,179 @@ import { program } from "commander";
 import { renderTemplateFiles, printTemplateMarkdownToConsole } from "./utils";
 import inquirer from "inquirer";
 
-// Command to create a new project
 program
-  .command("create")
+  .command("project")
   .description("Create a new microservices project")
-  .action(async () => {
-    const { projectName, commonPackageName } = await inquirer.prompt([
-      { type: "input", name: "projectName", message: "Enter project name:" },
-      {
-        type: "input",
-        name: "commonPackageName",
-        message: "Enter common package name:",
-      },
-    ]);
-    const targetDir = path.join(process.cwd(), projectName);
+  .option("-i, --instructions", "Print only the instructions")
+  .action(async (opts) => {
     const template = "project";
 
-    // Create the target directory
-    fs.mkdirSync(targetDir);
+    if (!opts.instructions) {
+      const { projectName, commonPackageName, commonPackageVersion } =
+        await inquirer.prompt([
+          {
+            type: "input",
+            name: "projectName",
+            message: "Enter project name:",
+          },
+          {
+            type: "input",
+            name: "commonPackageName",
+            message: "Enter common package name:",
+          },
+          {
+            type: "input",
+            name: "commonPackageVersion",
+            message: "Enter common package version number (ex: 0.2.0):",
+          },
+        ]);
+      const targetDir = path.join(process.cwd(), projectName);
 
-    try {
+      // Create the target directory
+      fs.mkdirSync(targetDir);
+
       // Copy template files to the target directory
       renderTemplateFiles(template, targetDir, {
         projectName,
         commonPackageName,
+        commonPackageVersion,
       });
-
-      // Read and print the readme contents
-      printTemplateMarkdownToConsole(template);
-    } catch (e) {
-      console.log(e);
     }
+
+    // Read and print the readme contents. Here we include manual steps and instructions
+    printTemplateMarkdownToConsole(template);
   });
 
 program
   .command("infra")
-  .description("Add infrastructure to an existing project");
+  .description("Add infrastructure to an existing project")
+  .option("-i, --instructions", "Print only the instructions")
+  .action(async (opts) => {
+    const { infraTemplate } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "infraTemplate",
+        message: "Select a infrastructure:",
+        choices: ["redis", "mongodb", "postgres", "nats"],
+      },
+    ]);
+    const template = "infra" + "/" + infraTemplate;
+
+    if (!opts.instructions) {
+      const { infraName } = await inquirer.prompt([
+        {
+          type: "input",
+          name: "infraName",
+          message: "Select a name for the infrastructure generated:",
+        },
+      ]);
+      const targetDir = path.join(process.cwd(), infraName);
+
+      // Create the target directory
+      fs.mkdirSync(targetDir);
+
+      // Copy template files to the target directory
+      renderTemplateFiles(template, targetDir, {
+        infraName,
+      });
+    }
+
+    printTemplateMarkdownToConsole(template);
+  });
 
 program
   .command("services")
-  .description("Add template services to an existing project");
+  .description("Add template services to an existing project")
+  .option("-i, --instructions", "Print only the instructions")
+  .action(async (opts) => {
+    const { serviceTemplate } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "serviceTemplate",
+        message: "Select a service:",
+        choices: ["auth", "base"],
+      },
+    ]);
+    const template = "services" + "/" + serviceTemplate;
+
+    if (!opts.instructions) {
+      const { serviceName, commonPackageName, commonPackageVersion } =
+        await inquirer.prompt([
+          {
+            type: "input",
+            name: "serviceName",
+            message: "Enter the service name:",
+          },
+          {
+            type: "input",
+            name: "commonPackageName",
+            message: "Enter common package name:",
+          },
+          {
+            type: "input",
+            name: "commonPackageVersion",
+            message: "Enter common package version number (ex: 0.2.0):",
+          },
+        ]);
+      const targetDir = path.join(process.cwd(), serviceName);
+
+      // Create the target directory
+      fs.mkdirSync(targetDir);
+
+      // Copy template files to the target directory
+      renderTemplateFiles(template, targetDir, {
+        serviceName,
+        commonPackageName,
+        commonPackageVersion,
+      });
+    }
+
+    // Read and print the readme contents
+    printTemplateMarkdownToConsole(template);
+  });
+
+program
+  .command("client")
+  .description("Create a client project")
+  .option("-i, --instructions", "Print only the instructions")
+  .action(async (opts) => {
+    const template = "client";
+
+    if (!opts.instructions) {
+      const { clientName, commonPackageName, commonPackageVersion } =
+        await inquirer.prompt([
+          {
+            type: "input",
+            name: "clientName",
+            message: "Enter the client name:",
+          },
+          {
+            type: "input",
+            name: "commonPackageName",
+            message: "Enter common package name:",
+          },
+          {
+            type: "input",
+            name: "commonPackageVersion",
+            message: "Enter common package version number (ex: 0.2.0):",
+          },
+        ]);
+      const targetDir = path.join(process.cwd(), clientName);
+
+      // Create the target directory
+      fs.mkdirSync(targetDir);
+
+      // Copy template files to the target directory
+      renderTemplateFiles(template, targetDir, {
+        clientName,
+        commonPackageName,
+        commonPackageVersion,
+      });
+    }
+
+    // Read and print the readme contents
+    printTemplateMarkdownToConsole(template);
+  });
 
 // Parse command line arguments
 program.parse(process.argv);
