@@ -13,24 +13,23 @@ program
     const template = "project";
 
     if (!opts.instructions) {
-      const { projectName, commonPackageName, commonPackageVersion } =
-        await inquirer.prompt([
-          {
-            type: "input",
-            name: "projectName",
-            message: "Enter project name:",
-          },
-          {
-            type: "input",
-            name: "commonPackageName",
-            message: "Enter common package name:",
-          },
-          {
-            type: "input",
-            name: "commonPackageVersion",
-            message: "Enter common package version number (ex: 0.2.0):",
-          },
-        ]);
+      const { projectName, commonPackageName, host } = await inquirer.prompt([
+        {
+          type: "input",
+          name: "projectName",
+          message: "Enter project name:",
+        },
+        {
+          type: "input",
+          name: "commonPackageName",
+          message: "Enter common package name (ex: @orgname/proy-common):",
+        },
+        {
+          type: "input",
+          name: "host",
+          message: "Enter host domain (ex: www.microservices.com):",
+        },
+      ]);
       const targetDir = path.join(process.cwd(), projectName);
 
       // Create the target directory
@@ -40,7 +39,7 @@ program
       await renderTemplateFiles(template, targetDir, {
         projectName,
         commonPackageName,
-        commonPackageVersion,
+        host,
       });
     }
 
@@ -71,10 +70,14 @@ program
           message: "Select a name for the infrastructure generated:",
         },
       ]);
-      const targetDir = path.join(process.cwd(), infraName);
+      const targetDir = path.join(process.cwd(), "infra", "k8s");
 
-      // Create the target directory
-      fs.mkdirSync(targetDir);
+      // Check directory exists
+      if (!fs.existsSync(targetDir)) {
+        return console.error(
+          `Directory does not exist: ${targetDir}. Make sure to run this from project root.`
+        );
+      }
 
       // Copy template files to the target directory
       await renderTemplateFiles(template, targetDir, {
@@ -101,6 +104,11 @@ program
     const template = "services" + "/" + serviceTemplate;
 
     if (!opts.instructions) {
+      // Check we're running this from project root
+      if (!fs.existsSync(path.join(process.cwd(), "infra"))) {
+        return console.error("Make sure to run this from project root.");
+      }
+
       const { serviceName, commonPackageName, commonPackageVersion } =
         await inquirer.prompt([
           {
@@ -119,6 +127,7 @@ program
             message: "Enter common package version number (ex: 0.2.0):",
           },
         ]);
+
       const targetDir = path.join(process.cwd(), serviceName);
 
       // Create the target directory

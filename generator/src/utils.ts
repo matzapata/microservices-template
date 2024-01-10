@@ -40,10 +40,7 @@ export function renderTemplateFiles(
         // Extract file name, render it, and remove .handlebars extension
         const targetFilePath = path.join(
           targetDir,
-          (await ejs.render(relativeFilePath, renderData)).replace(
-            /\.handlebars$/,
-            ""
-          )
+          (await ejs.render(relativeFilePath, renderData)).replace(/\.ejs$/, "")
         );
 
         // Ensure target directory exists
