@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import * as fs from "fs";
 import * as path from "path";
-import * as handlebars from "handlebars";
 import markshell from "markshell";
+import ejs, { Data } from "ejs";
 
 function templatesDir(
   template: string // May contain slashes to indicate subdirectories
@@ -18,15 +18,15 @@ function templatesDir(
 export function renderTemplateFiles(
   template: string, // May contain slashes to indicate subdirectories
   targetDir: string,
-  renderData: unknown
-) {
+  renderData: Data
+): Promise<void> {
   const templateFilesDir = path.join(templatesDir(template), "files");
 
   // Recursive function to traverse directories
-  const renderFileRecursively = (dir: string, relativePath = "") => {
+  const renderFileRecursively = async (dir: string, relativePath = "") => {
     const files = fs.readdirSync(dir);
 
-    files.forEach((file) => {
+    for (const file of files) {
       const filePath = path.join(dir, file);
       const relativeFilePath = path.join(relativePath, file);
 
@@ -40,22 +40,23 @@ export function renderTemplateFiles(
         // Extract file name, render it, and remove .handlebars extension
         const targetFilePath = path.join(
           targetDir,
-          handlebars
-            .compile(relativeFilePath)(renderData)
-            .replace(/\.handlebars$/, "")
+          (await ejs.render(relativeFilePath, renderData)).replace(
+            /\.handlebars$/,
+            ""
+          )
         );
 
         // Ensure target directory exists
         fs.mkdirSync(path.dirname(targetFilePath), { recursive: true });
 
         // Render file content using Handlebars and write to target
-        const renderedContent = handlebars.compile(fileContent)(renderData);
+        const renderedContent = await ejs.render(fileContent, renderData);
         fs.writeFileSync(targetFilePath, renderedContent);
       }
-    });
+    }
   };
 
-  renderFileRecursively(templateFilesDir);
+  return renderFileRecursively(templateFilesDir);
 }
 
 // Function to print markdown to the console using markshell

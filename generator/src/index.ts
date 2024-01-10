@@ -37,7 +37,7 @@ program
       fs.mkdirSync(targetDir);
 
       // Copy template files to the target directory
-      renderTemplateFiles(template, targetDir, {
+      await renderTemplateFiles(template, targetDir, {
         projectName,
         commonPackageName,
         commonPackageVersion,
@@ -77,7 +77,7 @@ program
       fs.mkdirSync(targetDir);
 
       // Copy template files to the target directory
-      renderTemplateFiles(template, targetDir, {
+      await renderTemplateFiles(template, targetDir, {
         infraName,
       });
     }
@@ -125,7 +125,7 @@ program
       fs.mkdirSync(targetDir);
 
       // Copy template files to the target directory
-      renderTemplateFiles(template, targetDir, {
+      await renderTemplateFiles(template, targetDir, {
         serviceName,
         commonPackageName,
         commonPackageVersion,
@@ -168,7 +168,7 @@ program
       fs.mkdirSync(targetDir);
 
       // Copy template files to the target directory
-      renderTemplateFiles(template, targetDir, {
+      await renderTemplateFiles(template, targetDir, {
         clientName,
         commonPackageName,
         commonPackageVersion,

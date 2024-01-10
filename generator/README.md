@@ -11,3 +11,7 @@ A command-line interface (CLI) for generating projects based on predefined templ
 - Use Handlebars for dynamic templating within configuration files.
 - Utilize Markshell to render and print README contents to the console.
 
+## Utils
+
+To add the handlebars to all files in folder do:
+- `find . -type f -exec sh -c 'mv "$0" "$0.handlebars"' {} \;`
