@@ -14,4 +14,4 @@ A command-line interface (CLI) for generating projects based on predefined templ
 ## Utils
 
 To add the handlebars to all files in folder do:
-- `find . -type f -exec sh -c 'mv "$0" "$0.handlebars"' {} \;`
+- `find . -type f -exec sh -c 'mv "$0" "$0.ejs"' {} \;`

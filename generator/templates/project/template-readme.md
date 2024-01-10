@@ -13,3 +13,5 @@ And lastly publish it with -> `npm publish --access public` (ideally it's privat
 
 ## Add new services
 
+Add more services and infrastructure with the generator.
+
