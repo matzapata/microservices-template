@@ -128,10 +128,7 @@ program
           },
         ]);
 
-      const targetDir = path.join(process.cwd(), serviceName);
-
-      // Create the target directory
-      fs.mkdirSync(targetDir);
+      const targetDir = process.cwd();
 
       // Copy template files to the target directory
       await renderTemplateFiles(template, targetDir, {

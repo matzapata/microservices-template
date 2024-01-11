@@ -1,0 +1,36 @@
+import express from "express";
+import "express-async-errors";
+import { json } from "body-parser";
+import cookieSession from "cookie-session";
+import { errorHandler, NotImplementedError } from "<%= commonPackageName %>";
+import { authRouter } from "./routes/auth";
+import { logger } from "src/utils/logger";
+import morgan from "morgan";
+import { usersRouter } from "src/routes/user";
+
+const app = express();
+
+app.set("trust proxy", true);
+app.use(json());
+app.use(
+  cookieSession({
+    signed: false,
+    secure: false,
+  })
+);
+app.use(
+  morgan(":method :url :status :response-time ms - :res[content-length]", {
+    stream: { write: (message: string) => logger.info(message.trim()) },
+  })
+);
+
+app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
+
+app.all("*", async () => {
+  throw new NotImplementedError();
+});
+
+app.use(errorHandler(logger.error));
+
+export { app };

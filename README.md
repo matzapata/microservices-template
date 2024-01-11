@@ -530,4 +530,6 @@ Check button.tsx as an example
 # TODO
 
 - TODO: Auth with passport for google oauth
+- TODO: Check merging updates strategy
+- TODO: Complete generator templates
 
