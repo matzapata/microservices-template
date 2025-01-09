@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "src/app";
 import { StatusCodes } from "http-status-codes";
-import { sendEmail } from "src/utils/send-email";
+import { sendEmail } from "src/lib/send-email";
 import { User, UserDoc } from "src/models/user";
 import { TokenDoc } from "src/models/token";
 import jwt from "jsonwebtoken";

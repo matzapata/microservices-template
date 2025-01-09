@@ -1,10 +1,37 @@
 import { Request, Response } from "express";
 import { User, UserDoc } from "src/models/user";
 import { Token } from "src/models/token";
-import { sendEmail } from "src/utils/send-email";
+import { sendEmail } from "src/lib/send-email";
 import { ENV } from "src/env";
 import { BadRequestError } from "@matzapata/common";
 import { StatusCodes } from "http-status-codes";
+import { UserService } from "src/services/user";
+import { TokenService } from "src/services/token";
+import { EmailService } from "src/services/email";
+
+export class AuthController {
+  static async register(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ): Promise<{ uid: string }> {
+    const user = await UserService.getUserByEmail(email);
+    if (user) throw new BadRequestError("Email already in use");
+
+    const newUser = await UserService.createUser({
+      email,
+      password,
+      firstName,
+      lastName,
+    });
+
+    const token = await TokenService.generateToken(email);
+    await EmailService.sendMail(email, token);
+
+    return { uid: newUser.id };
+  }
+}
 
 // POST /register Register a user
 export const register = async (

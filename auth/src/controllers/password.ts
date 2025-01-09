@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { User } from "src/models/user";
 import { BadRequestError } from "@matzapata/common";
 import { ENV } from "src/env";
-import { sendEmail } from "src/utils/send-email";
+import { sendEmail } from "src/lib/send-email";
 import { StatusCodes } from "http-status-codes";
 
 // @route POST /auth/reset

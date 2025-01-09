@@ -1,7 +1,7 @@
 import express from "express";
 import { validateRequest } from "@matzapata/common";
 import { body } from "express-validator";
-import * as AuthController from "src/controllers/auth";
+import { AuthController } from "src/controllers/auth";
 import * as PasswordController from "src/controllers/password";
 
 const router = express.Router();
@@ -19,7 +19,13 @@ router.post(
     body("lastName").not().isEmpty().withMessage("You last name is required"),
   ],
   validateRequest,
-  AuthController.register
+  (req: Request, res: Response) =>
+    AuthController.register(
+      req.body.email,
+      req.body.password,
+      req.body.firstName,
+      req.body.lastName
+    )
 );
 
 router.post(
